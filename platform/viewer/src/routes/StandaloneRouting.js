@@ -39,6 +39,7 @@ class StandaloneRouting extends Component {
       // Define a request to the server to retrieve the study data
       // as JSON, given a URL that was in the Route
       const oReq = new XMLHttpRequest();
+//      oReq.withCredentials = true;
 
       // Add event listeners for request failure
       oReq.addEventListener('error', error => {

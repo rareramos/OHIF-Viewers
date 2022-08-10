@@ -301,6 +301,7 @@ class StackLoadingListener extends BaseLoadingListener {
 
       const imageObject = cornerstone.imageCache.getImageLoadObject(imageId);
 
+console.log("loding frame?",imageIds.length, this.state);
       if (this.isImageCached(imageId)) {
         this._updateFrameStatus(imageId, true, debounced);
       }
@@ -414,7 +415,7 @@ class StackLoadingListener extends BaseLoadingListener {
       framesPerSecond: this.stats.speed,
       framesStatus: this.framesStatus,
     };
-
+console.log("thee is a place to fire maybe",progressData);
     if (debounced) {
       this._debouncedSetProgressData(progressId, progressData);
       return;

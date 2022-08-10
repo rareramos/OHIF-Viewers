@@ -496,6 +496,7 @@ export class StudyPrefetcher {
     displaySet.images.forEach(image => {
       const numFrames = image.numFrames;
       if (numFrames > 1) {
+console.log("HEre is a place");
         for (let i = 0; i < numFrames; i++) {
           let imageId = getImageId(image, i);
           imageIds.push(imageId);

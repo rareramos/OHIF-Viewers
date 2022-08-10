@@ -13,6 +13,7 @@ export default class PlayClipButton extends Component {
   };
 
   render() {
+    console.log("PlayClip:",this);
     const iconName = this.props.isPlaying ? 'stop' : 'play';
 
     return (

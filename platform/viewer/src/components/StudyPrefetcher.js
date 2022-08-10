@@ -34,7 +34,7 @@ const StudyPrefetcher = ({ studies, options }) => {
         return studyMetadata;
       });
       studyPrefetcher.setStudies(studiesMetadata);
-
+try {
       const study = studyPrefetcher.getStudy(detail.image);
       const series = studyPrefetcher.getSeries(study, detail.image);
       const instance = studyPrefetcher.getInstance(series, detail.image);
@@ -48,6 +48,10 @@ const StudyPrefetcher = ({ studies, options }) => {
         );
         studyPrefetcher.prefetch(detail.element, displaySetInstanceUID);
       }
+} catch(err) {
+  console.log("Prefetch error:",error);
+
+}
     };
 
     const onElementEnabled = ({ detail }) => {

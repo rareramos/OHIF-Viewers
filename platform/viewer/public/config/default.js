@@ -47,6 +47,7 @@ window.config = {
     },
     // Supported Keys: https://craig.is/killing/mice
     // ~ Cornerstone Extension
+    { commandName: 'Doug', label: 'Cine toggle', keys: ['.'] },
     { commandName: 'rotateViewportCW', label: 'Rotate Right', keys: ['r'] },
     { commandName: 'rotateViewportCCW', label: 'Rotate Left', keys: ['l'] },
     { commandName: 'invertViewport', label: 'Invert', keys: ['i'] },
@@ -78,6 +79,16 @@ window.config = {
       commandName: 'nextViewportDisplaySet',
       label: 'Next Series',
       keys: ['pageup'],
+    },
+    {
+      commandName: 'previousViewportDisplaySet',
+      label: 'Previous Series',
+      keys: ['['],
+    },
+    {
+      commandName: 'nextViewportDisplaySet',
+      label: 'Next Series',
+      keys: [']'],
     },
     // ~ Cornerstone Tools
     { commandName: 'setZoomTool', label: 'Zoom', keys: ['z'] },

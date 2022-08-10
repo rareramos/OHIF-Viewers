@@ -54,11 +54,12 @@ class CineDialog extends PureComponent {
         isPlaying: this.props.isPlaying,
       });
     }
-
+console.log("cine.componentDidUpdate");
     if (
       this.props.cineFrameRate !== prevProps.cineFrameRate ||
       this.props.cineFrameRate !== this.state.cineFrameRate
     ) {
+      console.log("cine.componentDidUpdate setState");
       this.setState({
         cineFrameRate: this.props.cineFrameRate,
       });
@@ -87,7 +88,7 @@ class CineDialog extends PureComponent {
 
   onClickPlayPause = () => {
     const value = !this.state.isPlaying;
-
+console.log("onClickPlayPause:",this);
     this.setState({
       isPlaying: value,
     });

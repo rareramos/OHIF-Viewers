@@ -61,9 +61,17 @@ const commandsModule = ({ servicesManager }) => {
         }
       }
     },
-    resetViewport: ({ viewports }) => {
+    Doug: ({ viewports }) => {
       const enabledElement = getEnabledElement(viewports.activeViewportIndex);
 
+      if (enabledElement) {
+        console.log('Doug');
+//        cornerstone.reset(enabledElement);
+      }
+    },
+    resetViewport: ({ viewports }) => {
+      const enabledElement = getEnabledElement(viewports.activeViewportIndex);
+console.log("hi");
       if (enabledElement) {
         cornerstone.reset(enabledElement);
       }

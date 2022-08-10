@@ -39,6 +39,7 @@ function createAndAddStack(stackMap, study, displaySet, stackUpdatedCallbacks) {
     const NumberOfFrames = naturalizedInstance.NumberOfFrames;
 
     if (NumberOfFrames > 1) {
+      console.log("Maybe fire here, Frames:",NumberOfFrames);
       for (let i = 0; i < NumberOfFrames; i++) {
         metaData.frameNumber = i;
         imageId = getImageId(image, i);

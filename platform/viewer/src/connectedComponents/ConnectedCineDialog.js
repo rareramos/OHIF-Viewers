@@ -62,13 +62,15 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
     cineFrameRate: activeViewportCineData.cineFrameRate,
     isPlaying: activeViewportCineData.isPlaying,
     onPlayPauseChanged: isPlaying => {
-      debugger;
       const cine = cloneDeep(activeViewportCineData);
       cine.isPlaying = !cine.isPlaying;
 
+      console.log("before: dispatchSetViewportSpecificData:",cine);
       propsFromDispatch.dispatchSetViewportSpecificData(activeViewportIndex, {
         cine,
       });
+      console.log("after: dispatchSetViewportSpecificData:",cine);
+
     },
     onFrameRateChanged: frameRate => {
       const cine = cloneDeep(activeViewportCineData);

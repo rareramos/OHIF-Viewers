@@ -107,6 +107,14 @@ const definitions = [
     commandName: 'resetViewport',
   },
   {
+    id: 'Play',
+    label: 'Play',
+    icon: 'play',
+    //
+    type: TOOLBAR_BUTTON_TYPES.COMMAND,
+    commandName: 'Play',
+  },
+  {
     id: 'Cine',
     label: 'CINE',
     icon: 'youtube',
