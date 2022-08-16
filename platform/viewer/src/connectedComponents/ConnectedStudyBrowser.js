@@ -91,14 +91,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
           type: 'error',
         });
       }
-      // eslint-disable-next-line no-console
-      console.log('--------------------- ', displaySet);
       dispatch(setActiveViewportSpecificData(displaySet));
       if (displaySet.frameRate !== undefined) {
         dispatch(
           setViewportSpecificData(0, {
             cine: {
-              cineFrameRate: 24,
+              cineFrameRate: displaySet.frameRate,
               isPlaying: true,
             },
           })
