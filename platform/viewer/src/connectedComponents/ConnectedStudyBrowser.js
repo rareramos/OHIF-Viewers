@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import findDisplaySetByUID from './findDisplaySetByUID';
 import { servicesManager } from './../App.js';
 import { StudyBrowser } from '../../../ui/src/components/studyBrowser/StudyBrowser';
+import { setViewportSpecificData } from '@ohif/core/src/redux/actions';
 
 const { setActiveViewportSpecificData } = OHIF.redux.actions;
 
@@ -90,8 +91,19 @@ const mapDispatchToProps = (dispatch, ownProps) => {
           type: 'error',
         });
       }
-
+      // eslint-disable-next-line no-console
+      console.log('--------------------- ', displaySet);
       dispatch(setActiveViewportSpecificData(displaySet));
+      if (displaySet.frameRate !== undefined) {
+        dispatch(
+          setViewportSpecificData(0, {
+            cine: {
+              cineFrameRate: 24,
+              isPlaying: true,
+            },
+          })
+        );
+      }
     },
   };
 };
