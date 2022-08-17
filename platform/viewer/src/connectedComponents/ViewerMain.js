@@ -206,7 +206,7 @@ class ViewerMain extends Component {
     if (displaySet.frameRate !== undefined) {
       this.props.setViewportSpecificData(viewportIndex, {
         cine: {
-          cineFrameRate: displaySet.frameRate,
+          cineFrameRate: 1000 / displaySet.frameRate,
           isPlaying: true,
         },
       });

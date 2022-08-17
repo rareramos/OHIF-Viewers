@@ -474,11 +474,11 @@ export class StudyPrefetcher {
    */
   getImageIdsFromDisplaySets(displaySets) {
     let imageIds = [];
-
-    displaySets.forEach(displaySet => {
-      imageIds = imageIds.concat(this.getImageIdsFromDisplaySet(displaySet));
-    });
-
+    if (displaySets) {
+      displaySets.forEach(displaySet => {
+        imageIds = imageIds.concat(this.getImageIdsFromDisplaySet(displaySet));
+      });
+    }
     return imageIds;
   }
 

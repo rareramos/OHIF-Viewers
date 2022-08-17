@@ -92,11 +92,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         });
       }
       dispatch(setActiveViewportSpecificData(displaySet));
+      //console.log('wwwwwwwwwwwwwwwwwwwwwwwwwww ', displaySet);
       if (displaySet.frameRate !== undefined) {
         dispatch(
           setViewportSpecificData(0, {
             cine: {
-              cineFrameRate: displaySet.frameRate,
+              cineFrameRate: 1000 / displaySet.frameRate,
               isPlaying: true,
             },
           })
