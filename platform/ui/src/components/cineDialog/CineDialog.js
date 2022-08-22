@@ -12,6 +12,7 @@ class CineDialog extends PureComponent {
     this.state = {
       cineFrameRate: props.cineFrameRate,
       isPlaying: props.isPlaying,
+      isPlayingAll: props.isPlayingAll,
     };
   }
 
@@ -25,7 +26,10 @@ class CineDialog extends PureComponent {
     cineFrameRate: PropTypes.number.isRequired,
     /** 'True' if playing, 'False' if paused. */
     isPlaying: PropTypes.bool.isRequired,
+    /** 'True' if playing all, 'False' if paused all. */
+    isPlayingAll: PropTypes.bool.isRequired,
     onPlayPauseChanged: PropTypes.func,
+    onAllPlayPauseChanged: PropTypes.func,
     onFrameRateChanged: PropTypes.func,
     onClickNextButton: PropTypes.func,
     onClickBackButton: PropTypes.func,
@@ -41,6 +45,7 @@ class CineDialog extends PureComponent {
     cineStepFrameRate: 1,
     cineFrameRate: 24,
     isPlaying: false,
+    isPlayingAll: false,
   };
 
   componentDidUpdate(prevProps) {
@@ -94,6 +99,18 @@ class CineDialog extends PureComponent {
 
     if (this.props.onPlayPauseChanged) {
       this.props.onPlayPauseChanged(value);
+    }
+  };
+
+  onClickAllPlayPause = () => {
+    const value = !this.state.isPlayingAll;
+
+    this.setState({
+      isPlayingAll: value,
+    });
+
+    if (this.props.onAllPlayPauseChanged) {
+      this.props.onAllPlayPauseChanged(value);
     }
   };
 
@@ -167,6 +184,14 @@ class CineDialog extends PureComponent {
                 onClick={this.onClickSkipToEnd}
               >
                 <Icon name="fast-forward" />
+              </button>
+              <button
+                title={t('Play All / Stop All')}
+                className="btn"
+                data-toggle="tooltip"
+                onClick={this.onClickAllPlayPause}
+              >
+                <Icon name={this.state.isPlayingAll ? 'stopall' : 'playall'} />
               </button>
             </div>
           </div>

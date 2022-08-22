@@ -38,6 +38,7 @@ const LoggerProvider = ({ children, service }) => {
     setState(state => ({ ...state, errors: [...state.errors, errorObject] }));
 
     if (displayOnConsole) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   };
@@ -55,6 +56,7 @@ const LoggerProvider = ({ children, service }) => {
     }));
 
     if (displayOnConsole) {
+      // eslint-disable-next-line no-console
       console.info(message);
     }
   };

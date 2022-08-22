@@ -537,7 +537,8 @@ export class StudyPrefetcher {
    * Warns that cache is full and stops prefetching.
    */
   cacheFullHandler = () => {
-    log.warn('Cache full');
+    // eslint-disable-next-line no-console
+    console.warn('Cache full');
     this.stopPrefetching();
   };
 }

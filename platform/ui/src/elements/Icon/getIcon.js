@@ -37,6 +37,7 @@ import exclamationTriangle from './icons/exclamation-triangle.svg';
 import fastBackward from './icons/fast-backward.svg';
 import fastForward from './icons/fast-forward.svg';
 import stop from './icons/stop.svg';
+import stopall from './icons/stopall.svg';
 import info from './icons/info.svg';
 import inlineEdit from './icons/inline-edit.svg';
 import level from './icons/level.svg';
@@ -59,6 +60,7 @@ import ohifTextLogo from './icons/ohif-text-logo.svg';
 import oval from './icons/oval.svg';
 import palette from './icons/palette.svg';
 import play from './icons/play.svg';
+import playall from './icons/playall.svg';
 import plus from './icons/plus.svg';
 import powerOff from './icons/power-off.svg';
 import reset from './icons/reset.svg';
@@ -136,6 +138,7 @@ const ICONS = {
   'ohif-text-logo': ohifTextLogo,
   lock,
   play,
+  playall,
   database,
   cog,
   'circle-notch': circleNotch,
@@ -146,6 +149,7 @@ const ICONS = {
   'step-forward': stepForward,
   clipboard: clipboard,
   stop,
+  stopall,
   'th-large': thLarge,
   'th-list': thList,
   sun,

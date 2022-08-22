@@ -24,7 +24,7 @@ const mapStateToProps = state => {
   let playnow = false;
 
   if (fr) {
-    fr = 1000/fr;
+    fr = 1000 / fr;
     playnow = true;
   } else {
     fr = 24;
@@ -61,6 +61,19 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
   return {
     cineFrameRate: activeViewportCineData.cineFrameRate,
     isPlaying: activeViewportCineData.isPlaying,
+    isPlayingAll: activeViewportCineData.isPlayingAll,
+    onAllPlayPauseChanged: isPlayingAll => {
+      const cine = cloneDeep(activeViewportCineData);
+      cine.isPlayingAll = !cine.isPlayingAll;
+      cine.isPlaying = cine.isPlayingAll;
+
+      const viewportSpecificData = window.store.getState().viewports.viewportSpecificData;
+      for (const index in viewportSpecificData) {
+        propsFromDispatch.dispatchSetViewportSpecificData(index, {
+          cine,
+        });
+      }
+    },
     onPlayPauseChanged: isPlaying => {
       //debugger;
       const cine = cloneDeep(activeViewportCineData);
