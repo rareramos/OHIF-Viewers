@@ -452,7 +452,6 @@ class StudyLoadingListener {
       //console.log('Skipping adding stack to StudyLoadingListener');
       return;
     }
-
     const displaySetInstanceUID = stack.displaySetInstanceUID;
 
     if (!this.listeners[displaySetInstanceUID]) {
@@ -473,7 +472,7 @@ class StudyLoadingListener {
         console.warn(displaySet);
         return;
       }
-
+      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&', stack)
       this.addStack(stack, {
         isMultiFrame: displaySet.isMultiFrame,
       });

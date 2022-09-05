@@ -22,6 +22,7 @@ import AppContext from '../context/AppContext';
 import './Viewer.css';
 import StudyPrefetcher from '../components/StudyPrefetcher.js';
 import StudyLoadingMonitor from '../components/StudyLoadingMonitor';
+import cornerstoneTools from 'cornerstone-tools';
 
 const { studyMetadataManager } = OHIF.utils;
 
@@ -91,6 +92,22 @@ class Viewer extends Component {
     });
 
     this._getActiveViewport = this._getActiveViewport.bind(this);
+    //
+    cornerstoneTools.init({
+      globalToolSyncEnabled: true,
+    });
+
+    // Create the synchronizer used to update reference lines
+    OHIF.viewer.synchronizer = new cornerstoneTools.Synchronizer(
+      'cornerstonenewimage',
+      cornerstoneTools.updateImageSynchronizer
+    );
+    cornerstoneTools.addTool(cornerstoneTools.ReferenceLinesTool);
+    cornerstoneTools.setToolActive('ReferenceLinesTool', {mouseButtonMask: 1});
+    /*cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
+    cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+    cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 });
+    cornerstoneTools.setToolActive('StackScrollMouseWheel', {});*/
   }
 
   state = {

@@ -7,6 +7,7 @@ import React from 'react';
 import memoize from 'lodash/memoize';
 import _values from 'lodash/values';
 import { setViewportSpecificData } from '@ohif/core/src/redux/actions';
+import { forEach } from '@ohif/core/src/utils/hierarchicalListUtils';
 
 var values = memoize(_values);
 
@@ -215,7 +216,30 @@ class ViewerMain extends Component {
   render() {
     const { viewportSpecificData } = this.props;
     const viewportData = values(viewportSpecificData);
+    // eslint-disable-next-line no-console
+    //console.log('-----', viewportData);
+    // eslint-disable-next-line no-empty
+    if (viewportData.length > 1) {
+      let SOPInstanceUIDarr = {};
 
+      for (let i = 0; i < viewportData.length; i++) {
+        const sui = viewportData[i].SOPInstanceUID;
+        if (sui) {
+          if (!SOPInstanceUIDarr[sui]) {
+            SOPInstanceUIDarr[sui] = [];
+          }
+          SOPInstanceUIDarr[sui].push(viewportData[i]);
+        }
+      }
+      //
+      console.log('1 SOPInstanceUIDarr = ', viewportData);
+      console.log('2 SOPInstanceUIDarr = ', this.props.studies);
+      /*for (let sui in SOPInstanceUIDarr) {
+        if (SOPInstanceUIDarr[sui].length > 1) {
+
+        }
+      }*/
+    }
     return (
       <div className="ViewerMain">
         {this.state.displaySets.length && (

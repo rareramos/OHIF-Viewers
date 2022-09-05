@@ -73,7 +73,6 @@ class ToolbarRow extends Component {
       left: [],
       right: [],
     };
-
     // ~ FIND MENU OPTIONS
     panelModules.forEach(panelExtension => {
       const panelModule = panelExtension.module;

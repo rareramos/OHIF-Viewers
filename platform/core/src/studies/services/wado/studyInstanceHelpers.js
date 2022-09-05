@@ -33,6 +33,7 @@ function createStudy(server, aSopInstance) {
     NumberOfStudyRelatedInstances: DICOMWeb.getString(aSopInstance['00201208']),
     StudyInstanceUID: DICOMWeb.getString(aSopInstance['0020000D']),
     InstitutionName: DICOMWeb.getString(aSopInstance['00080080']),
+    synchronizer: false,
   };
 }
 
