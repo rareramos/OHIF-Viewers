@@ -23,6 +23,7 @@ import './Viewer.css';
 import StudyPrefetcher from '../components/StudyPrefetcher.js';
 import StudyLoadingMonitor from '../components/StudyLoadingMonitor';
 import cornerstoneTools from 'cornerstone-tools';
+import cornerstone from 'cornerstone-core';
 
 const { studyMetadataManager } = OHIF.utils;
 
@@ -97,17 +98,15 @@ class Viewer extends Component {
       globalToolSyncEnabled: true,
     });
 
-    // Create the synchronizer used to update reference lines
     OHIF.viewer.synchronizer = new cornerstoneTools.Synchronizer(
       'cornerstonenewimage',
       cornerstoneTools.updateImageSynchronizer
     );
-    cornerstoneTools.addTool(cornerstoneTools.ReferenceLinesTool);
-    cornerstoneTools.setToolActive('ReferenceLinesTool', {mouseButtonMask: 1});
-    /*cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
+
+    cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
     cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
     cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 });
-    cornerstoneTools.setToolActive('StackScrollMouseWheel', {});*/
+    cornerstoneTools.setToolActive('StackScrollMouseWheel', {});
   }
 
   state = {
@@ -381,7 +380,6 @@ class Viewer extends Component {
               if (isClosedOrShouldClose) {
                 updatedState[openKey] = !updatedState[openKey];
               }
-
               this.setState(updatedState);
             }}
             studies={this.props.studies}

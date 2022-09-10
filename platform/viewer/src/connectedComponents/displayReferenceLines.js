@@ -37,13 +37,15 @@ export async function displayReferenceLines(element) {
   //cornerstoneTools.addStackStateManager(element, ['stack', 'Crosshairs']);
   //cornerstoneTools.addToolState(element, 'stack', firstStack);
   // Loop through all other viewport elements and enable reference lines
-  $('.viewport-container')
+  //$('.viewport-container')
+  $('.viewport-element')
     //.not(element)
     .each((index, viewportElement) => {
-      let imageId;
+      let imageId1;
       if ($(viewportElement).find('canvas').length) {
         cornerstone.enable(viewportElement);
         const enabledElement = cornerstone.getEnabledElement(viewportElement);
+        imageId1 = enabledElement.image.imageId;
         console.log('000000000000000000000000000 ', enabledElement);
         /*try {
           const enabledElement = cornerstone.getEnabledElement(viewportElement);

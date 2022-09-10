@@ -25,7 +25,6 @@ const ViewportPane = function (props) {
       hovered: monitor.isOver(),
     }),
   });
-
   return (
     <div
       className={classNames(

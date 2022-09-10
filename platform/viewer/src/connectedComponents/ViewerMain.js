@@ -6,8 +6,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'lodash/memoize';
 import _values from 'lodash/values';
-import { setViewportSpecificData } from '@ohif/core/src/redux/actions';
-import { forEach } from '@ohif/core/src/utils/hierarchicalListUtils';
+import cornerstone from 'cornerstone-core';
+import cornerstoneTools from 'cornerstone-tools';
+import OHIF from '@ohif/core';
 
 var values = memoize(_values);
 
@@ -139,7 +140,6 @@ class ViewerMain extends Component {
       StudyInstanceUID,
       displaySetInstanceUID
     );
-
     const { LoggerService, UINotificationService } = servicesManager.services;
 
     if (displaySet.isDerived) {
@@ -219,27 +219,70 @@ class ViewerMain extends Component {
     // eslint-disable-next-line no-console
     //console.log('-----', viewportData);
     // eslint-disable-next-line no-empty
-    if (viewportData.length > 1) {
-      let SOPInstanceUIDarr = {};
-
-      for (let i = 0; i < viewportData.length; i++) {
-        const sui = viewportData[i].SOPInstanceUID;
-        if (sui) {
-          if (!SOPInstanceUIDarr[sui]) {
-            SOPInstanceUIDarr[sui] = [];
+    setTimeout(()=>{
+      if (viewportData.length > 1) {
+        let SOPInstanceUIDarr = {};
+        let displaySetInstanceUID = [];
+        for (let i = 0; i < viewportData.length; i++) {
+          const sui = viewportData[i].SOPInstanceUID;
+          if (sui) {
+            if (!SOPInstanceUIDarr[sui]) {
+              SOPInstanceUIDarr[sui] = [];
+            }
+            SOPInstanceUIDarr[sui].push(viewportData[i]);
+            displaySetInstanceUID.push(viewportData[i].displaySetInstanceUID);
           }
-          SOPInstanceUIDarr[sui].push(viewportData[i]);
+        }
+        //
+        console.log('1 SOPInstanceUIDarr = ', viewportData);
+        console.log('2 SOPInstanceUIDarr = ', this.props.studies);
+        if(viewportData.length===2) { //then reference lines
+          const firstDisplaySetInstanceUID = viewportData[0].displaySetInstanceUID;
+          const secondDisplaySetInstanceUID = viewportData[1].displaySetInstanceUID;
+          if(firstDisplaySetInstanceUID !== secondDisplaySetInstanceUID) {
+            //
+            const displaySets = this.props.studies[0].displaySets;
+            const chestStack = {
+              currentImageIdIndex: 0,
+              imageIds: [],
+            };
+            const topgramStack = {
+              currentImageIdIndex: 0,
+              imageIds: [],
+            };
+            for (let i = 0; i < displaySets.length; i++) {
+              if (displaySets[i].displaySetInstanceUID === firstDisplaySetInstanceUID) {
+                displaySets[i].images.forEach(img => {
+                  chestStack.imageIds.push(img._data.url);
+                });
+              }
+              if (displaySets[i].displaySetInstanceUID === secondDisplaySetInstanceUID) {
+                displaySets[i].images.forEach(img => {
+                  topgramStack.imageIds.push(img._data.url);
+                });
+              }
+            }
+            console.log('Reference lines!!!!!', chestStack, topgramStack);
+            const views = document.getElementsByClassName('viewport-element');
+            const topgramElement = views[0];
+            const chestElement = views[1];
+            console.log('container ==== ', topgramElement)
+
+            const elements = [topgramElement, chestElement];
+            elements.forEach(element => {
+              cornerstone.enable(element);
+            });
+            //
+            loadSeries(cornerstone, chestStack.imageIds, topgramElement, chestStack);
+            loadSeries(cornerstone, topgramStack.imageIds, chestElement, topgramStack);
+            /*cornerstoneTools.addTool(cornerstoneTools.ReferenceLinesTool);
+            cornerstoneTools.setToolEnabled('ReferenceLines', {
+              synchronizationContext: OHIF.viewer.synchronizer,
+            });*/
+          }
         }
       }
-      //
-      console.log('1 SOPInstanceUIDarr = ', viewportData);
-      console.log('2 SOPInstanceUIDarr = ', this.props.studies);
-      /*for (let sui in SOPInstanceUIDarr) {
-        if (SOPInstanceUIDarr[sui].length > 1) {
-
-        }
-      }*/
-    }
+    }, 2000);
     return (
       <div className="ViewerMain">
         {this.state.displaySets.length && (
@@ -282,6 +325,29 @@ class ViewerMain extends Component {
     // Clears OHIF.viewer.StudyMetadataList collection
     //OHIF.viewer.StudyMetadataList.removeAll();
   }
+}
+
+function loadSeries(cornerstone, imageIds, element, stack) {
+  // Cache all images and metadata
+  imageIds.forEach(imageId => cornerstone.loadAndCacheImage(imageId));
+
+  // Load and display first image in stack
+  return cornerstone.loadImage(imageIds[0]).then(image => {
+    // display this image
+    cornerstone.displayImage(element, image);
+
+    //OHIF.viewer.synchronizer.add(element);
+    cornerstoneTools.addStackStateManager(element, ['stack', 'ReferenceLines']);
+    cornerstoneTools.addToolState(element, 'ReferenceLines', stack);
+    cornerstoneTools.setToolEnabled('ReferenceLines');
+
+    // set the stack as tool state
+    /*
+    OHIF.viewer.synchronizer.add(element);
+    cornerstoneTools.addStackStateManager(element, ['stack', 'ReferenceLines']);
+    cornerstoneTools.addToolState(element, 'stack', stack);
+    */
+  });
 }
 
 export default ViewerMain;
