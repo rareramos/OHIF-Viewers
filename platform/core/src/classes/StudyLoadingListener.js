@@ -4,6 +4,7 @@ import debounce from 'lodash.debounce';
 
 import StackManager from '../utils/StackManager';
 import { StudyPrefetcher } from './StudyPrefetcher';
+import STACK from '../../../viewer/src/App';
 
 class BaseLoadingListener {
   constructor(stack, options = {}) {
@@ -184,7 +185,6 @@ class DICOMFileLoadingListener extends BaseLoadingListener {
 
     this._setProgressData(progressId, progressData);
   }
-
   _convertImageIdToDataSetUrl(imageId) {
     // Remove the prefix ("dicomweb:" or "wadouri:"")
     imageId = imageId.replace(/^(dicomweb:|wadouri:)/i, '');
@@ -472,7 +472,7 @@ class StudyLoadingListener {
         console.warn(displaySet);
         return;
       }
-      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&', stack)
+      //&&&&&&&&&&&&&&&& STACK.push(stack); //save all stack data
       this.addStack(stack, {
         isMultiFrame: displaySet.isMultiFrame,
       });

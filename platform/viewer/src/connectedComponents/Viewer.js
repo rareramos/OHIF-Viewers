@@ -93,20 +93,6 @@ class Viewer extends Component {
     });
 
     this._getActiveViewport = this._getActiveViewport.bind(this);
-    //
-    cornerstoneTools.init({
-      globalToolSyncEnabled: true,
-    });
-
-    OHIF.viewer.synchronizer = new cornerstoneTools.Synchronizer(
-      'cornerstonenewimage',
-      cornerstoneTools.updateImageSynchronizer
-    );
-
-    cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
-    cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
-    cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 });
-    cornerstoneTools.setToolActive('StackScrollMouseWheel', {});
   }
 
   state = {

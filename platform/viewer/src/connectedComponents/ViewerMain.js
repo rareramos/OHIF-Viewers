@@ -1,5 +1,5 @@
 import './ViewerMain.css';
-import { servicesManager } from './../App.js';
+import { servicesManager, STACK } from './../App.js';
 import { Component } from 'react';
 import { ConnectedViewportGrid } from './../components/ViewportGrid/index.js';
 import PropTypes from 'prop-types';
@@ -8,9 +8,12 @@ import memoize from 'lodash/memoize';
 import _values from 'lodash/values';
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
-import OHIF from '@ohif/core';
+import StackManager from '@ohif/core/src/utils/StackManager';
+import _ from 'lodash';
 
 var values = memoize(_values);
+let firstDisplaySetInstanceUID = '';
+let secondDisplaySetInstanceUID = '';
 
 class ViewerMain extends Component {
   static propTypes = {
@@ -118,7 +121,6 @@ class ViewerMain extends Component {
 
       dirtyViewportPanes.push(foundDisplaySet);
     }
-
     dirtyViewportPanes.forEach((vp, i) => {
       if (vp && vp.StudyInstanceUID) {
         this.setViewportData({
@@ -219,66 +221,79 @@ class ViewerMain extends Component {
     // eslint-disable-next-line no-console
     //console.log('-----', viewportData);
     // eslint-disable-next-line no-empty
-    setTimeout(()=>{
+    let numImagesLoaded = 0;
+
+    setTimeout(() => {
       if (viewportData.length > 1) {
-        let SOPInstanceUIDarr = {};
-        let displaySetInstanceUID = [];
-        for (let i = 0; i < viewportData.length; i++) {
-          const sui = viewportData[i].SOPInstanceUID;
-          if (sui) {
-            if (!SOPInstanceUIDarr[sui]) {
-              SOPInstanceUIDarr[sui] = [];
-            }
-            SOPInstanceUIDarr[sui].push(viewportData[i]);
-            displaySetInstanceUID.push(viewportData[i].displaySetInstanceUID);
-          }
-        }
-        //
-        console.log('1 SOPInstanceUIDarr = ', viewportData);
-        console.log('2 SOPInstanceUIDarr = ', this.props.studies);
-        if(viewportData.length===2) { //then reference lines
-          const firstDisplaySetInstanceUID = viewportData[0].displaySetInstanceUID;
-          const secondDisplaySetInstanceUID = viewportData[1].displaySetInstanceUID;
-          if(firstDisplaySetInstanceUID !== secondDisplaySetInstanceUID) {
-            //
-            const displaySets = this.props.studies[0].displaySets;
-            const chestStack = {
-              currentImageIdIndex: 0,
-              imageIds: [],
-            };
-            const topgramStack = {
-              currentImageIdIndex: 0,
-              imageIds: [],
-            };
-            for (let i = 0; i < displaySets.length; i++) {
-              if (displaySets[i].displaySetInstanceUID === firstDisplaySetInstanceUID) {
-                displaySets[i].images.forEach(img => {
-                  chestStack.imageIds.push(img._data.url);
-                });
-              }
-              if (displaySets[i].displaySetInstanceUID === secondDisplaySetInstanceUID) {
-                displaySets[i].images.forEach(img => {
-                  topgramStack.imageIds.push(img._data.url);
-                });
-              }
-            }
-            console.log('Reference lines!!!!!', chestStack, topgramStack);
+        if (
+          viewportData.length === 2 &&
+          (viewportData[0].displaySetInstanceUID !==
+            firstDisplaySetInstanceUID ||
+            viewportData[1].displaySetInstanceUID !==
+              secondDisplaySetInstanceUID)
+        ) {
+          firstDisplaySetInstanceUID = viewportData[0].displaySetInstanceUID;
+          secondDisplaySetInstanceUID = viewportData[1].displaySetInstanceUID;
+          if (firstDisplaySetInstanceUID !== secondDisplaySetInstanceUID) {
             const views = document.getElementsByClassName('viewport-element');
             const topgramElement = views[0];
             const chestElement = views[1];
-            console.log('container ==== ', topgramElement)
+            const handleImageRendered = evt => {
+              evt.detail.element.removeEventListener(
+                'cornerstoneimagerendered',
+                handleImageRendered
+              );
 
+              numImagesLoaded++;
+              if (numImagesLoaded === 2) {
+                addReferenceLinesTool(topgramElement, chestElement);
+              }
+            };
+            topgramElement.addEventListener(
+              'cornerstoneimagerendered',
+              handleImageRendered
+            );
+            chestElement.addEventListener(
+              'cornerstoneimagerendered',
+              handleImageRendered
+            );
             const elements = [topgramElement, chestElement];
             elements.forEach(element => {
               cornerstone.enable(element);
             });
+
+            const allstack = StackManager.getAllStacks();
+            const data = {
+              0: {
+                imageIds: [],
+                stack: {},
+              },
+              1: {
+                imageIds: [],
+                stack: {},
+              },
+            };
+            for (let i = 0; i < viewportData.length; i++) {
+              const vData = viewportData[i];
+              data[i].stack = _.clone(allstack[vData.displaySetInstanceUID]);
+              data[i].stack.currentImageIdIndex = 0;
+              data[i].imageIds = _.clone(
+                allstack[vData.displaySetInstanceUID].imageIds
+              );
+            }
             //
-            loadSeries(cornerstone, chestStack.imageIds, topgramElement, chestStack);
-            loadSeries(cornerstone, topgramStack.imageIds, chestElement, topgramStack);
-            /*cornerstoneTools.addTool(cornerstoneTools.ReferenceLinesTool);
-            cornerstoneTools.setToolEnabled('ReferenceLines', {
-              synchronizationContext: OHIF.viewer.synchronizer,
-            });*/
+            const topgramImageIds = data[0].imageIds;
+            const chestImageIds = data[1].imageIds;
+            const chestStack = data[1].stack;
+            const topgramStack = data[0].stack;
+            //
+            loadSeries(cornerstone, chestImageIds, chestElement, chestStack);
+            loadSeries(
+              cornerstone,
+              topgramImageIds,
+              topgramElement,
+              topgramStack
+            );
           }
         }
       }
@@ -327,6 +342,21 @@ class ViewerMain extends Component {
   }
 }
 
+function addReferenceLinesTool(firstElement, secondElement) {
+  const synchronizer = new cornerstoneTools.Synchronizer(
+    'cornerstonenewimage',
+    cornerstoneTools.updateImageSynchronizer
+  );
+
+  synchronizer.add(firstElement);
+  synchronizer.add(secondElement);
+
+  cornerstoneTools.addTool(cornerstoneTools.ReferenceLinesTool);
+  cornerstoneTools.setToolEnabled('ReferenceLines', {
+    synchronizationContext: synchronizer,
+  });
+}
+
 function loadSeries(cornerstone, imageIds, element, stack) {
   // Cache all images and metadata
   imageIds.forEach(imageId => cornerstone.loadAndCacheImage(imageId));
@@ -336,17 +366,9 @@ function loadSeries(cornerstone, imageIds, element, stack) {
     // display this image
     cornerstone.displayImage(element, image);
 
-    //OHIF.viewer.synchronizer.add(element);
-    cornerstoneTools.addStackStateManager(element, ['stack', 'ReferenceLines']);
-    cornerstoneTools.addToolState(element, 'ReferenceLines', stack);
-    cornerstoneTools.setToolEnabled('ReferenceLines');
-
     // set the stack as tool state
-    /*
-    OHIF.viewer.synchronizer.add(element);
     cornerstoneTools.addStackStateManager(element, ['stack', 'ReferenceLines']);
     cornerstoneTools.addToolState(element, 'stack', stack);
-    */
   });
 }
 

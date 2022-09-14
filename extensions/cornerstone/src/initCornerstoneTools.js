@@ -41,4 +41,14 @@ export default function(configuration = {}) {
     preserveExistingPool: configuration.preserveExistingPool,
     maxSimultaneousRequests: configuration.maxSimultaneousRequests,
   });
+
+  OHIF.viewer.synchronizer = new cornerstoneTools.Synchronizer(
+    'cornerstonenewimage',
+    cornerstoneTools.updateImageSynchronizer
+  );
+
+  cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
+  cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+  cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 });
+  cornerstoneTools.setToolActive('StackScrollMouseWheel', {});
 }
