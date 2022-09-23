@@ -122,6 +122,7 @@ const ICONS = {
   circle,
   'circle-o': circleO,
   times,
+  'ref-lines': times,
   'create-comment': createComment,
   'create-screen-capture': createScreenCapture,
   edit,

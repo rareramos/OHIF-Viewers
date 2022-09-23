@@ -19,6 +19,7 @@ import resolveObjectPath from './resolveObjectPath';
 import * as hierarchicalListUtils from './hierarchicalListUtils';
 import * as progressTrackingUtils from './progressTrackingUtils';
 import xhrRetryRequestHook from './xhrRetryRequestHook';
+import referenceLines from './referenceLines';
 
 const utils = {
   guid,
@@ -35,6 +36,7 @@ const utils = {
   loadAndCacheDerivedDisplaySets,
   makeDeferred,
   makeCancelable,
+  referenceLines,
   hotkeys,
   Queue,
   isDicomUid,

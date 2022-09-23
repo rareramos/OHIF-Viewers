@@ -10,6 +10,7 @@ import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import StackManager from '@ohif/core/src/utils/StackManager';
 import _ from 'lodash';
+import OHIF from '@ohif/core';
 
 var values = memoize(_values);
 let firstDisplaySetInstanceUID = '';
@@ -343,18 +344,24 @@ class ViewerMain extends Component {
 
 //Adding lines for images and adding them to the synchronizer
 function addReferenceLinesTool(firstElement, secondElement) {
-  const synchronizer = new cornerstoneTools.Synchronizer(
+  OHIF.viewer.updateImageSynchronizer = new cornerstoneTools.Synchronizer(
     'cornerstonenewimage',
     cornerstoneTools.updateImageSynchronizer
   );
 
-  synchronizer.add(firstElement);
-  synchronizer.add(secondElement);
+  OHIF.viewer.updateImageSynchronizer.add(firstElement);
+  OHIF.viewer.updateImageSynchronizer.add(secondElement);
 
   cornerstoneTools.addTool(cornerstoneTools.ReferenceLinesTool);
-  cornerstoneTools.setToolEnabled('ReferenceLines', {
-    synchronizationContext: synchronizer,
+  OHIF.viewer.ReferenceLines = false;
+  cornerstoneTools.setToolDisabled('ReferenceLines', {
+    synchronizationContext: OHIF.viewer.updateImageSynchronizer,
   });
+  /*
+    cornerstoneTools.setToolEnabled('ReferenceLines', {
+      synchronizationContext: synchronizer,
+    });
+  */
 }
 
 function loadSeries(cornerstone, imageIds, element, stack) {

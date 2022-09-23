@@ -237,6 +237,16 @@ const definitions = [
     commandName: 'setCornerstoneLayout',
     context: 'ACTIVE_VIEWPORT::VTK',
   },
+  {
+    id: 'Reflines',
+    label: 'Reference lines',
+    icon: 'ref-lines',
+    //
+    type: TOOLBAR_BUTTON_TYPES.COMMAND,
+    commandName: 'setToolActive',
+    commandOptions: { toolName: 'ReferenceLines' },
+    context: 'ACTIVE_VIEWPORT::RL',
+  },
 ];
 
 export default {

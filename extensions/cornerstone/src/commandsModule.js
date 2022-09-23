@@ -7,7 +7,7 @@ import { getEnabledElement } from './state';
 import CornerstoneViewportDownloadForm from './CornerstoneViewportDownloadForm';
 const scroll = cornerstoneTools.import('util/scroll');
 
-const { studyMetadataManager } = OHIF.utils;
+const { studyMetadataManager, referenceLines } = OHIF.utils;
 const { setViewportSpecificData } = OHIF.redux.actions;
 
 const refreshCornerstoneViewports = () => {
@@ -20,6 +20,9 @@ const refreshCornerstoneViewports = () => {
 
 const commandsModule = ({ servicesManager }) => {
   const actions = {
+    setReferenceLines: ({ viewports }) => {
+
+    },
     rotateViewport: ({ viewports, rotation }) => {
       const enabledElement = getEnabledElement(viewports.activeViewportIndex);
 
@@ -83,7 +86,14 @@ const commandsModule = ({ servicesManager }) => {
       if (!toolName) {
         console.warn('No toolname provided to setToolActive command');
       }
-      cornerstoneTools.setToolActive(toolName, { mouseButtonMask: 1 });
+      if(toolName === "ReferenceLines") {
+        cornerstoneTools[OHIF.viewer.ReferenceLines?'setToolDisabled':'setToolEnabled']('ReferenceLines', {
+          synchronizationContext: OHIF.viewer.updateImageSynchronizer,
+        });
+        OHIF.viewer.ReferenceLines = !OHIF.viewer.ReferenceLines;
+      } else {
+        cornerstoneTools.setToolActive(toolName, { mouseButtonMask: 1 });
+      }
     },
     clearAnnotations: ({ viewports }) => {
       const element = getEnabledElement(viewports.activeViewportIndex);
@@ -349,6 +359,11 @@ const commandsModule = ({ servicesManager }) => {
     },
     flipViewportHorizontal: {
       commandFn: actions.flipViewportHorizontal,
+      storeContexts: ['viewports'],
+      options: {},
+    },
+    setReferenceLines: {
+      commandFn: actions.setReferenceLines,
       storeContexts: ['viewports'],
       options: {},
     },

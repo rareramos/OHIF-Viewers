@@ -117,7 +117,6 @@ export class CommandsManager {
    */
   getCommand(commandName, contextName) {
     let contexts = [];
-
     if (contextName) {
       const context = this.getContext(contextName);
       if (context) {
@@ -160,7 +159,6 @@ export class CommandsManager {
       log.warn(`Command "${commandName}" not found in current context`);
       return;
     }
-
     const { commandFn, storeContexts = [] } = definition;
     const definitionOptions = definition.options;
 

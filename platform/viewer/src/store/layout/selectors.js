@@ -23,6 +23,9 @@ export const getActiveContexts = createSelector(
       activeContexts.push(activeViewportExtension);
     }
 
+    if (layoutViewports.length === 2) {
+      activeContexts.push('ACTIVE_VIEWPORT::RL');
+    }
     return activeContexts;
   }
 );
