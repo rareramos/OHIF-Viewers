@@ -23,7 +23,7 @@ export const getActiveContexts = createSelector(
       activeContexts.push(activeViewportExtension);
     }
 
-    if (layoutViewports.length === 2) {
+    if (layoutViewports.length > 1) {
       activeContexts.push('ACTIVE_VIEWPORT::RL');
     }
     return activeContexts;

@@ -13,8 +13,10 @@ import _ from 'lodash';
 import OHIF from '@ohif/core';
 
 var values = memoize(_values);
+let delaySetReferenceLines = 0;
 let firstDisplaySetInstanceUID = '';
 let secondDisplaySetInstanceUID = '';
+let instanceUIDs = [];
 
 class ViewerMain extends Component {
   static propTypes = {
@@ -223,77 +225,57 @@ class ViewerMain extends Component {
     const { viewportSpecificData } = this.props;
     const viewportData = values(viewportSpecificData);
     let numImagesLoaded = 0;
-    setTimeout(() => {
+    clearTimeout(delaySetReferenceLines);
+    delaySetReferenceLines = setTimeout(() => {
       if (viewportData.length > 1) {
-        if (
-          viewportData.length === 2 &&
-          (viewportData[0].displaySetInstanceUID !==
-            firstDisplaySetInstanceUID ||
-            viewportData[1].displaySetInstanceUID !==
-            secondDisplaySetInstanceUID)
-        ) {
-          firstDisplaySetInstanceUID = viewportData[0].displaySetInstanceUID;
-          secondDisplaySetInstanceUID = viewportData[1].displaySetInstanceUID;
-          if (firstDisplaySetInstanceUID !== secondDisplaySetInstanceUID) {
-            const views = document.getElementsByClassName('viewport-element');
-            const topgramElement = views[0];
-            const chestElement = views[1];
-            const handleImageRendered = evt => {
-              evt.detail.element.removeEventListener(
-                'cornerstoneimagerendered',
-                handleImageRendered
-              );
+        let tempinstanceUIDs = [];
+        viewportData.forEach(inst => {
+          tempinstanceUIDs.push(inst.displaySetInstanceUID);
+        });
+        //console.log('1 ++++++++++++++++++++++', viewportData)
+        //console.log('2 ++++++++++++++++++++++', tempinstanceUIDs, instanceUIDs, _.isEqual(tempinstanceUIDs,instanceUIDs))
+        if(!_.isEqual(tempinstanceUIDs,instanceUIDs)) {
+          OHIF.viewer.ReferenceLines = false;
+          cornerstoneTools.setToolDisabled('ReferenceLines', {
+            synchronizationContext: OHIF.viewer.updateImageSynchronizer,
+          });
+          //
+          instanceUIDs = _.clone(tempinstanceUIDs);
+          //create synchronizer for reference-lines
+          if(OHIF.viewer.updateImageSynchronizer) OHIF.viewer.updateImageSynchronizer.destroy();
+          OHIF.viewer.updateImageSynchronizer = new cornerstoneTools.Synchronizer('cornerstonenewimage', cornerstoneTools.updateImageSynchronizer);
+          //
+          const views = document.getElementsByClassName('viewport-element');
+          const handleImageRendered = evt => {
+            evt.detail.element.removeEventListener('cornerstoneimagerendered', handleImageRendered);
 
-              numImagesLoaded++;
-              if (numImagesLoaded === 2) {
-                addReferenceLinesTool(topgramElement, chestElement);
+            numImagesLoaded++;
+            if (numImagesLoaded === viewportData.length) {
+              for(let i=0;i<views.length;i++) {
+                OHIF.viewer.updateImageSynchronizer.add(views[i]);
               }
-            };
-            topgramElement.addEventListener(
-              'cornerstoneimagerendered',
-              handleImageRendered
-            );
-            chestElement.addEventListener(
-              'cornerstoneimagerendered',
-              handleImageRendered
-            );
-            const elements = [topgramElement, chestElement];
-            elements.forEach(element => {
-              cornerstone.enable(element);
-            });
-
-            const allstack = StackManager.getAllStacks();
-            const data = {
-              0: {
-                imageIds: [],
-                stack: {},
-              },
-              1: {
-                imageIds: [],
-                stack: {},
-              },
-            };
-            for (let i = 0; i < viewportData.length; i++) {
-              const vData = viewportData[i];
-              data[i].stack = _.clone(allstack[vData.displaySetInstanceUID]);
-              data[i].stack.currentImageIdIndex = 0;
-              data[i].imageIds = _.clone(
-                allstack[vData.displaySetInstanceUID].imageIds
-              );
             }
+          };
+          //
+          for(let i=0;i<views.length;i++) {
+            const element = views[i];
+            element.addEventListener('cornerstoneimagerendered', handleImageRendered);
+            cornerstone.enable(element);
+          }
+
+          const allstack = StackManager.getAllStacks();
+          const data = {};
+          for (let i = 0; i < viewportData.length; i++) {
+            const vData = viewportData[i];
+            data[i] = {imageIds: [], stack: {}};
+            data[i].stack = _.clone(allstack[vData.displaySetInstanceUID]);
+            data[i].stack.currentImageIdIndex = 0;
+            data[i].imageIds = _.clone(allstack[vData.displaySetInstanceUID].imageIds);
             //
-            const topgramImageIds = data[0].imageIds;
-            const chestImageIds = data[1].imageIds;
-            const chestStack = data[1].stack;
-            const topgramStack = data[0].stack;
-            //
-            loadSeries(cornerstone, chestImageIds, chestElement, chestStack);
-            loadSeries(
-              cornerstone,
-              topgramImageIds,
-              topgramElement,
-              topgramStack
-            );
+            const element = views[i];
+            const _imageIds = data[i].imageIds;
+            const _stack = data[i].stack;
+            loadSeries(cornerstone, _imageIds, element, _stack);
           }
         }
       }
@@ -328,7 +310,7 @@ class ViewerMain extends Component {
     // Remove beforeUnload event handler...
     //window.removeEventListener('beforeunload', unloadHandlers.beforeUnload);
     // Destroy the synchronizer used to update reference lines
-    //OHIF.viewer.updateImageSynchronizer.destroy();
+    OHIF.viewer.updateImageSynchronizer.destroy();
     // TODO: Instruct all plugins to clean up themselves
     //
     // Clear references to all stacks in the StackManager
@@ -342,28 +324,6 @@ class ViewerMain extends Component {
   }
 }
 
-//Adding lines for images and adding them to the synchronizer
-function addReferenceLinesTool(firstElement, secondElement) {
-  OHIF.viewer.updateImageSynchronizer = new cornerstoneTools.Synchronizer(
-    'cornerstonenewimage',
-    cornerstoneTools.updateImageSynchronizer
-  );
-
-  OHIF.viewer.updateImageSynchronizer.add(firstElement);
-  OHIF.viewer.updateImageSynchronizer.add(secondElement);
-
-  cornerstoneTools.addTool(cornerstoneTools.ReferenceLinesTool);
-  OHIF.viewer.ReferenceLines = false;
-  cornerstoneTools.setToolDisabled('ReferenceLines', {
-    synchronizationContext: OHIF.viewer.updateImageSynchronizer,
-  });
-  /*
-    cornerstoneTools.setToolEnabled('ReferenceLines', {
-      synchronizationContext: synchronizer,
-    });
-  */
-}
-
 function loadSeries(cornerstone, imageIds, element, stack) {
   // Cache all images and metadata
   imageIds.forEach(imageId => cornerstone.loadAndCacheImage(imageId));
@@ -371,7 +331,7 @@ function loadSeries(cornerstone, imageIds, element, stack) {
   // Load and display first image in stack
   return cornerstone.loadImage(imageIds[0]).then(image => {
     // display this image
-    cornerstone.displayImage(element, image);
+    //cornerstone.displayImage(element, image);
 
     // set the stack as tool state
     cornerstoneTools.addStackStateManager(element, ['stack', 'ReferenceLines']);

@@ -42,11 +42,7 @@ export default function(configuration = {}) {
     maxSimultaneousRequests: configuration.maxSimultaneousRequests,
   });
 
-  //create synchronizer for reference-lines
-  OHIF.viewer.synchronizer = new cornerstoneTools.Synchronizer(
-    'cornerstonenewimage',
-    cornerstoneTools.updateImageSynchronizer
-  );
+  cornerstoneTools.addTool(cornerstoneTools.ReferenceLinesTool);
   //add tools for the stack scroll (for reference-lines)
   cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
   cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
