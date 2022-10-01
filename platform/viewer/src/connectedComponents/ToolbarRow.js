@@ -325,7 +325,7 @@ function _getButtonComponents(toolbarButtons, activeButtons) {
 /**
  * TODO: DEPRECATE
  * This is used exclusively in `extensions/cornerstone/src`
- * We have better ways with new UI Services to trigger "builtin" behaviors
+ * We have better ways with new UI Services to trigger yo877098709870987098709870978870987987098"builtin" behaviors
  *
  * A handy way for us to handle different button types. IE. firing commands for
  * buttons, or initiation built in behavior.

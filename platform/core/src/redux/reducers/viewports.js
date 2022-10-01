@@ -9,6 +9,7 @@ import {
   SET_VIEWPORT_ACTIVE,
   SET_VIEWPORT_LAYOUT,
   SET_VIEWPORT_LAYOUT_AND_DATA,
+  SET_NEXT_FOUR_IMAGES,
 } from './../constants/ActionTypes.js';
 
 setAutoFreeze(false);
@@ -154,6 +155,28 @@ const viewports = (state = DEFAULT_STATE, action) => {
         ...state,
         numRows: action.numRows,
         numColumns: action.numColumns,
+        layout: { viewports: [...action.viewports] },
+        viewportSpecificData,
+        activeViewportIndex,
+      };
+    }
+
+    case SET_NEXT_FOUR_IMAGES: {
+      const { numRows, numColumns } = action;
+      const viewportSpecificData = findActiveViewportSpecificData(
+        numRows,
+        numColumns,
+        action.viewportSpecificData
+      );
+      const activeViewportIndex = getActiveViewportIndex(
+        numRows,
+        numColumns,
+        state.activeViewportIndex
+      );
+      return {
+        ...state,
+        numRows: 2,
+        numColumns: 2,
         layout: { viewports: [...action.viewports] },
         viewportSpecificData,
         activeViewportIndex,

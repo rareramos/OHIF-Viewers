@@ -12,6 +12,7 @@ import {
   SET_VIEWPORT_LAYOUT_AND_DATA,
   SET_USER_PREFERENCES,
 } from './constants/ActionTypes.js';
+import { SET_NEXT_FOUR_IMAGES } from './constants/ActionTypes';
 
 /**
  * The definition of a viewport layout.
@@ -75,6 +76,14 @@ export const setActiveViewportSpecificData = viewportSpecificData => ({
   viewportSpecificData,
 });
 
+export const setNextFour = ({ viewports }, viewportSpecificData) => ({
+  type: SET_NEXT_FOUR_IMAGES,
+  numRows: 2,
+  numColumns: 2,
+  viewports,
+  viewportSpecificData,
+});
+
 /**
  * NOT-VIEWPORT
  */
@@ -120,6 +129,7 @@ const actions = {
   setLayout,
   clearViewportSpecificData,
   setActiveViewportSpecificData,
+  setNextFour,
   /**
    * NOT-VIEWPORT
    */

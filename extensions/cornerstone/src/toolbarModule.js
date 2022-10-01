@@ -237,6 +237,15 @@ const definitions = [
     commandName: 'setCornerstoneLayout',
     context: 'ACTIVE_VIEWPORT::VTK',
   },
+  {
+    id: 'NextFour',
+    label: 'Next Four',
+    icon: 'angle-double-down',
+    //
+    type: TOOLBAR_BUTTON_TYPES.COMMAND,
+    commandName: 'nextFourViewport',
+    context: 'ACTIVE_VIEWPORT::FOUR',
+  },
 ];
 
 export default {

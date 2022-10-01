@@ -22,6 +22,9 @@ export const getActiveContexts = createSelector(
       const activeViewportExtension = `ACTIVE_VIEWPORT::${activeViewportPluginName.toUpperCase()}`;
       activeContexts.push(activeViewportExtension);
     }
+    if (layoutViewports.length === 4) {
+      activeContexts.push('ACTIVE_VIEWPORT::FOUR');
+    }
 
     return activeContexts;
   }
