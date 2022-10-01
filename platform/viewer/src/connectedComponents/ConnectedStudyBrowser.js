@@ -92,7 +92,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         });
       }
       dispatch(setActiveViewportSpecificData(displaySet));
-      //console.log('wwwwwwwwwwwwwwwwwwwwwwwwwww ', displaySet);
       if (displaySet.frameRate !== undefined) {
         dispatch(
           setViewportSpecificData(0, {

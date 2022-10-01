@@ -41,4 +41,15 @@ export default function(configuration = {}) {
     preserveExistingPool: configuration.preserveExistingPool,
     maxSimultaneousRequests: configuration.maxSimultaneousRequests,
   });
+
+  //create synchronizer for reference-lines
+  OHIF.viewer.synchronizer = new cornerstoneTools.Synchronizer(
+    'cornerstonenewimage',
+    cornerstoneTools.updateImageSynchronizer
+  );
+  //add tools for the stack scroll (for reference-lines)
+  cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
+  cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+  cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 });
+  cornerstoneTools.setToolActive('StackScrollMouseWheel', {});
 }
