@@ -122,7 +122,6 @@ const viewports = (state = DEFAULT_STATE, action) => {
         numColumns,
         state.activeViewportIndex
       );
-
       return {
         ...state,
         numRows: action.numRows,
@@ -199,8 +198,9 @@ const viewports = (state = DEFAULT_STATE, action) => {
         });
 
         if (action.viewportSpecificData && action.viewportSpecificData.plugin) {
-          draftState.layout.viewports[action.viewportIndex].plugin =
-            action.viewportSpecificData.plugin;
+          if(draftState.layout.viewports[action.viewportIndex]) {
+            draftState.layout.viewports[action.viewportIndex].plugin = action.viewportSpecificData.plugin;
+          }
         }
       });
     }

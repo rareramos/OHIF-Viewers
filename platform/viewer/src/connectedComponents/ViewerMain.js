@@ -10,6 +10,9 @@ import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import StackManager from '@ohif/core/src/utils/StackManager';
 import _ from 'lodash';
+import { commandsManager } from '../App';
+import OHIF from '@ohif/core';
+const { setLayout } = OHIF.redux.actions;
 
 var values = memoize(_values);
 let firstDisplaySetInstanceUID = '';
@@ -91,6 +94,8 @@ class ViewerMain extends Component {
     const { layout, viewportSpecificData } = this.props;
     const { displaySets } = this.state;
     //
+    if(displaySets.length <= 4) return;
+    //
     const dirtyViewportPanes = [];
     let maxKey = 0;
     for (let i=0;i<displaySets.length;i++) {
@@ -99,18 +104,8 @@ class ViewerMain extends Component {
       }
     }
     const newViewportSpecificData = [];
-    const newDisplaySetInstanceUIDs = [];
     for (let i=(maxKey+1);i<displaySets.length;i++) {
-      newDisplaySetInstanceUIDs.push(displaySets[i].displaySetInstanceUID);
       newViewportSpecificData.push(displaySets[i]);
-    }
-    if(newDisplaySetInstanceUIDs.length<4) {
-      for (let i=0;i<displaySets.length;i++) {
-        if(newDisplaySetInstanceUIDs.length!==4) {
-          newDisplaySetInstanceUIDs.push(displaySets[i].displaySetInstanceUID);
-          newViewportSpecificData.push(displaySets[i]);
-        }
-      }
     }
 
     for (let i = 0; i < layout.viewports.length; i++) {
@@ -125,19 +120,7 @@ class ViewerMain extends Component {
           StudyInstanceUID: viewportPane.StudyInstanceUID,
           displaySetInstanceUID: viewportPane.displaySetInstanceUID,
         });
-
-        continue;
       }
-
-      const foundDisplaySet =
-        displaySets.find(
-          ds =>
-            !dirtyViewportPanes.some(
-              v => v.displaySetInstanceUID === ds.displaySetInstanceUID
-            )
-        ) || displaySets[displaySets.length - 1];
-
-      dirtyViewportPanes.push(foundDisplaySet);
     }
     dirtyViewportPanes.forEach((vp, i) => {
       if (vp && vp.StudyInstanceUID) {
@@ -148,6 +131,18 @@ class ViewerMain extends Component {
         });
       }
     });
+    //
+    if(dirtyViewportPanes.length<4) {
+      const _numRows = 1;
+      const _numColumns = 4 - dirtyViewportPanes.length;
+      const _viewports = _.clone(layout.viewports).slice(0, _numColumns);
+      const _layout = {
+        numRows: _numRows,
+        numColumns: _numColumns,
+        viewports: _viewports
+      };
+      window.store.dispatch(setLayout(_layout));
+    }
   }
 
   fillEmptyViewportPanes = () => {
