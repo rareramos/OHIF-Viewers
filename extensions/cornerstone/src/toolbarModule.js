@@ -244,7 +244,7 @@ const definitions = [
     //
     type: TOOLBAR_BUTTON_TYPES.COMMAND,
     commandName: 'nextPageViewport',
-    context: 'ACTIVE_VIEWPORT::FLIPPING',
+    //context: 'ACTIVE_VIEWPORT::FLIPPING',
   },
 ];
 
