@@ -7,7 +7,7 @@ let AppContext = React.createContext({});
 export const CONTEXTS = {
   CORNERSTONE: 'ACTIVE_VIEWPORT::CORNERSTONE',
   VTK: 'ACTIVE_VIEWPORT::VTK',
-  FOUR: 'ACTIVE_VIEWPORT::FOUR'
+  FLIPPING: 'ACTIVE_VIEWPORT::FLIPPING'
 };
 
 export const useAppContext = () => useContext(AppContext);

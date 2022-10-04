@@ -238,13 +238,13 @@ const definitions = [
     context: 'ACTIVE_VIEWPORT::VTK',
   },
   {
-    id: 'NextFour',
-    label: 'Next Four',
+    id: 'NextPage',
+    label: 'Next >>>',
     icon: 'angle-double-down',
     //
     type: TOOLBAR_BUTTON_TYPES.COMMAND,
-    commandName: 'nextFourViewport',
-    context: 'ACTIVE_VIEWPORT::FOUR',
+    commandName: 'nextPageViewport',
+    context: 'ACTIVE_VIEWPORT::FLIPPING',
   },
 ];
 

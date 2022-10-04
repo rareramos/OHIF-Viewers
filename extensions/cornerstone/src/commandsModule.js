@@ -5,7 +5,6 @@ import OHIF from '@ohif/core';
 import setCornerstoneLayout from './utils/setCornerstoneLayout.js';
 import { getEnabledElement } from './state';
 import CornerstoneViewportDownloadForm from './CornerstoneViewportDownloadForm';
-import setNextFourImages from './utils/setNextFourImages';
 const scroll = cornerstoneTools.import('util/scroll');
 
 const { studyMetadataManager } = OHIF.utils;
@@ -21,8 +20,8 @@ const refreshCornerstoneViewports = () => {
 
 const commandsModule = ({ servicesManager }) => {
   const actions = {
-    nextFourViewport: ({ viewports }) => {
-      const event = new window.CustomEvent('updateNextFourImages', {
+    nextPageViewport: ({ viewports }) => {
+      const event = new window.CustomEvent('updateNextPageImages', {
         detail: viewports,
       });
       window.dispatchEvent(event);
@@ -304,8 +303,8 @@ const commandsModule = ({ servicesManager }) => {
   };
 
   const definitions = {
-    nextFourViewport: {
-      commandFn: actions.nextFourViewport,
+    nextPageViewport: {
+      commandFn: actions.nextPageViewport,
       storeContexts: ['viewports'],
       options: {},
       context: 'VIEWER',

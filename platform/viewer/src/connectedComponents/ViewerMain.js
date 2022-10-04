@@ -34,8 +34,8 @@ class ViewerMain extends Component {
     this.state = {
       displaySets: [],
     };
-    this.updateNextFourImages = this.updateNextFourImages.bind(this);
-    window.addEventListener('updateNextFourImages', this.updateNextFourImages);
+    this.updateNextPageImages = this.updateNextPageImages.bind(this);
+    window.addEventListener('updateNextPageImages', this.updateNextPageImages);
   }
 
   getDisplaySets(studies) {
@@ -90,16 +90,17 @@ class ViewerMain extends Component {
     }
   }
 
-  fillNextFourEmptyViewportPanes = () => {
+  fillNextPage = () => {
     const { layout, viewportSpecificData } = this.props;
     const { displaySets } = this.state;
+    const totalViews = layout.viewports.length;
     //
-    if(displaySets.length <= 4) return;
+    if(displaySets.length < totalViews) return;
     //
     const dirtyViewportPanes = [];
     let maxKey = 0;
     for (let i=0;i<displaySets.length;i++) {
-      if(displaySets[i].displaySetInstanceUID===viewportSpecificData[3].displaySetInstanceUID) {
+      if(displaySets[i].displaySetInstanceUID===viewportSpecificData[totalViews-1].displaySetInstanceUID) {
         maxKey = i;
       }
     }
@@ -132,9 +133,9 @@ class ViewerMain extends Component {
       }
     });
     //
-    if(dirtyViewportPanes.length<4) {
+    if(dirtyViewportPanes.length<totalViews) {
       const _numRows = 1;
-      const _numColumns = 4 - dirtyViewportPanes.length;
+      const _numColumns = totalViews - dirtyViewportPanes.length;
       const _viewports = _.clone(layout.viewports).slice(0, _numColumns);
       const _layout = {
         numRows: _numRows,
@@ -375,7 +376,7 @@ class ViewerMain extends Component {
       this.props.clearViewportSpecificData(viewportIndex);
     });
     window.removeEventListener(
-      'updateNextFourImages',
+      'updateNextPageImages',
       this.updateNextFourImages
     );
     // TODO: These don't have to be viewer specific?
@@ -398,12 +399,12 @@ class ViewerMain extends Component {
     //OHIF.viewer.StudyMetadataList.removeAll();
   }
 
-  updateNextFourImages(e) {
+  updateNextPageImages(e) {
     const displaySets = this.getDisplaySets(this.props.studies);
     if (!displaySets || !displaySets.length || displaySets.length < 5) {
       return;
     }
-    this.setState({ displaySets }, this.fillNextFourEmptyViewportPanes);
+    this.setState({ displaySets }, this.fillNextPage);
   }
 }
 
