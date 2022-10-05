@@ -133,9 +133,10 @@ class ViewerMain extends Component {
       }
     });
     //
+    if(dirtyViewportPanes.length===0) return;
     if(dirtyViewportPanes.length<totalViews) {
       const _numRows = 1;
-      const _numColumns = totalViews - dirtyViewportPanes.length;
+      const _numColumns = dirtyViewportPanes.length;
       const _viewports = _.clone(layout.viewports).slice(0, _numColumns);
       const _layout = {
         numRows: _numRows,
