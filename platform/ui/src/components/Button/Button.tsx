@@ -239,8 +239,8 @@ Button.propTypes = {
     'primary',
     'secondary',
     'white',
-    'light',
     'black',
+    'light',
   ]),
   /** Whether the button should have full width  */
   fullWidth: PropTypes.bool,

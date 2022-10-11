@@ -104,7 +104,7 @@ function modeFactory() {
         'Layout',
         // 'MPR',
         'MoreTools',
-	'Paging',
+        'Paging',
       ]);
     },
     onModeExit: ({ servicesManager }) => {

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { ViewportGrid, ViewportPane, useViewportGrid } from '@ohif/ui';
 import EmptyViewport from './EmptyViewport';
 import classNames from 'classnames';
+import CornerstoneCacheService from '../../../../extensions/cornerstone/src/services/ViewportService/CornerstoneCacheService';
 
 function ViewerViewportGrid(props) {
   const { servicesManager, viewportComponents, dataSource } = props;
@@ -16,6 +17,7 @@ function ViewerViewportGrid(props) {
     MeasurementService,
     HangingProtocolService,
     CineService,
+
   } = servicesManager.services;
 
   /**
@@ -26,7 +28,6 @@ function ViewerViewportGrid(props) {
       if (!availableDisplaySets.length) {
         return;
       }
-
       const {
         viewportMatchDetails,
         hpAlreadyApplied,
@@ -73,7 +74,6 @@ function ViewerViewportGrid(props) {
           viewportOptions,
           displaySetOptions: displaySetUIDsToHangOptions,
         });
-
         // During setting displaySets for viewport, we need to update the hanging protocol
         // but some viewports contain more than one display set (fusion), and their displaySet
         // will not be available at the time of setting displaySets for viewport. So we need to
@@ -91,12 +91,6 @@ function ViewerViewportGrid(props) {
   useEffect(() => {
     const displaySets = DisplaySetService.getActiveDisplaySets();
     updateDisplaySetsForViewports(displaySets);
-    //stop all cines if run
-    const _viewports = document.getElementsByClassName('cornerstone-viewport-element');
-    for(let i=0;i<_viewports.length;i++) {
-      //CineService.stopClip(_viewports[i]);
-      //CineService.setCine({ id: i, isPlaying: false });
-    }
   }, [numRows, numCols]);
 
   // Layout change based on hanging protocols
@@ -112,11 +106,26 @@ function ViewerViewportGrid(props) {
         });
       }
     );
-
     return () => {
       unsubscribe();
     };
   }, [viewports]);
+
+  useEffect(() => {
+    const { unsubscribe } = CornerstoneCacheService.subscribe(
+      CornerstoneCacheService.EVENTS.VIEWPORT_DATA_CHANGED,
+      props => {
+        const newViewportIndex = props.viewportIndex;
+        const cine = CineService.getState().cines[newViewportIndex];
+        if(!cine.isPlaying && window.cineAutoplay) {
+          CineService.setCine({ id: newViewportIndex, isPlaying: true });
+        }
+      }
+    );
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   // Using Hanging protocol engine to match the displaySets
   useEffect(() => {
@@ -127,7 +136,6 @@ function ViewerViewportGrid(props) {
         updateDisplaySetsForViewports(displaySets);
       }
     );
-
     return () => {
       unsubscribe();
     };
