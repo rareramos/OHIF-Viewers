@@ -156,6 +156,7 @@ function TrackedCornerstoneViewport(props) {
 
   const cine = cines[viewportIndex];
   const isPlaying = (cine && cine.isPlaying) || false;
+  const isPlayingAll = (cine && cine.isPlayingAll) || false;
 
   return (
     <>
@@ -195,12 +196,22 @@ function TrackedCornerstoneViewport(props) {
         showCine={isCineEnabled}
         cineProps={{
           isPlaying,
+          isPlayingAll,
           onClose: () => commandsManager.runCommand('toggleCine'),
           onPlayPauseChange: isPlaying =>
             cineService.setCine({
               id: activeViewportIndex,
               isPlaying,
             }),
+          onAutoPlayPauseChange: () => {
+            if(window.cineAutoplay===undefined) window.cineAutoplay = false;
+            window.cineAutoplay = !window.cineAutoplay;
+            cineService.setCine({
+              id: activeViewportIndex,
+              isPlaying: window.cineAutoplay,
+            });
+            cineService.setCineAutoplay();
+          },
           onFrameRateChange: frameRate =>
             cineService.setCine({
               id: activeViewportIndex,

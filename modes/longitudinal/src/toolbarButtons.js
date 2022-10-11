@@ -476,6 +476,22 @@ const toolbarButtons = [
       ],
     },
   },
+  {
+    id: 'Paging',
+    type: 'ohif.action',
+    props: {
+      icon: 'launch-arrow',
+      label: 'Paging',
+      type: 'action',
+      commands: [
+        {
+          commandName: 'nextPageViewport',
+          commandOptions: {},
+          context: 'CORNERSTONE',
+        },
+      ],
+    },
+  },
 ];
 
 export default toolbarButtons;

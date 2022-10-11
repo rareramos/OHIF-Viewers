@@ -239,6 +239,7 @@ Button.propTypes = {
     'primary',
     'secondary',
     'white',
+    'light',
     'black',
   ]),
   /** Whether the button should have full width  */

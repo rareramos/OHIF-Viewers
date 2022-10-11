@@ -15,6 +15,7 @@ function ViewerViewportGrid(props) {
     DisplaySetService,
     MeasurementService,
     HangingProtocolService,
+    CineService,
   } = servicesManager.services;
 
   /**
@@ -90,6 +91,12 @@ function ViewerViewportGrid(props) {
   useEffect(() => {
     const displaySets = DisplaySetService.getActiveDisplaySets();
     updateDisplaySetsForViewports(displaySets);
+    //stop all cines if run
+    const _viewports = document.getElementsByClassName('cornerstone-viewport-element');
+    for(let i=0;i<_viewports.length;i++) {
+      //CineService.stopClip(_viewports[i]);
+      //CineService.setCine({ id: i, isPlaying: false });
+    }
   }, [numRows, numCols]);
 
   // Layout change based on hanging protocols

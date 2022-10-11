@@ -14,7 +14,6 @@ function Header({ children, menuOptions, isReturnEnabled, onClickReturnButton, i
       onClickReturnButton()
     }
   };
-
   const CustomLogo = (React) => {
     return WhiteLabeling.createLogoComponentFn(React)
   }

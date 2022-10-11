@@ -16,7 +16,7 @@ const DEFAULT_STATE = {
   },
 };
 
-const DEFAULT_CINE = { isPlaying: false, frameRate: 24 };
+const DEFAULT_CINE = { isPlaying: false, isPlayingAll: false, frameRate: 24 };
 
 export const CineContext = createContext(DEFAULT_STATE);
 
@@ -32,6 +32,15 @@ export default function CineProvider({ children, service }) {
         cines[id].isPlaying =
           isPlaying !== undefined ? isPlaying : cines[id].isPlaying;
 
+        return { ...state, ...{ cines } };
+      }
+      case 'SET_CINE_AUTOPLAY': {
+        const cines = state.cines;
+        /*for (const id in cines) {
+          if (cines.hasOwnProperty(id)) {
+            cines[id].isPlaying = window.cineAutoplay;
+          }
+        }*/
         return { ...state, ...{ cines } };
       }
       case 'SET_IS_CINE_ENABLED': {
@@ -65,6 +74,15 @@ export default function CineProvider({ children, service }) {
     [dispatch]
   );
 
+  const setCineAutoplay = useCallback(
+    () =>
+      dispatch({
+        type: 'SET_CINE_AUTOPLAY',
+        payload: {},
+      }),
+    [dispatch]
+  );
+
   /**
    * Sets the implementation of a modal service that can be used by extensions.
    *
@@ -72,13 +90,14 @@ export default function CineProvider({ children, service }) {
    */
   useEffect(() => {
     if (service) {
-      service.setServiceImplementation({ getState, setIsCineEnabled, setCine });
+      service.setServiceImplementation({ getState, setIsCineEnabled, setCine, setCineAutoplay });
     }
-  }, [getState, service, setCine, setIsCineEnabled]);
+  }, [getState, service, setCine, setCineAutoplay, setIsCineEnabled]);
 
   const api = {
     getState,
     setCine,
+    setCineAutoplay,
     setIsCineEnabled,
     playClip: (element, playClipOptions) =>
       service.playClip(element, playClipOptions),

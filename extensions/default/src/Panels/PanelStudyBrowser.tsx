@@ -107,7 +107,6 @@ function PanelStudyBrowser({
       currentDisplaySets,
       thumbnailImageSrcMap
     );
-
     setDisplaySets(mappedDisplaySets);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [thumbnailImageSrcMap]);

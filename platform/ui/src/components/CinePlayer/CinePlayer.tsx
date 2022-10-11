@@ -13,6 +13,7 @@ const CinePlayer = ({
   frameRate: defaultFrameRate,
   onFrameRateChange,
   onPlayPauseChange,
+  onAutoPlayPauseChange,
   onClose,
 }) => {
   const [frameRate, setFrameRate] = useState(defaultFrameRate);
@@ -24,11 +25,17 @@ const CinePlayer = ({
     setFrameRate(frameRate);
   };
 
+  const onAutoPlayPauseChangeHandler = () => onAutoPlayPauseChange();
   const onPlayPauseChangeHandler = () => onPlayPauseChange(!isPlaying);
 
   const action = {
     false: { icon: 'old-play' },
     true: { icon: 'old-stop' },
+  };
+
+  const actionautoplay = {
+    false: { icon: 'aplay-play' },
+    true: { icon: 'aplay-stop' },
   };
 
   return (
@@ -41,6 +48,15 @@ const CinePlayer = ({
         onClick={onPlayPauseChangeHandler}
       >
         <Icon width="15px" height="15px" name={action[isPlaying].icon} />
+      </IconButton>
+      <IconButton
+        variant="text"
+        color="inherit"
+        size="initial"
+        className="ml-2 mr-3 text-primary-active"
+        onClick={onAutoPlayPauseChangeHandler}
+      >
+        <Icon width="15px" height="15px" name={actionautoplay[window.cineAutoplay||false].icon} />
       </IconButton>
       <div className="flex flex-col justify-center h-full pt-2 pl-1 pr-1 mr-3">
         <input
@@ -77,6 +93,7 @@ CinePlayer.defaultProps = {
   stepFrameRate: 1,
   frameRate: 24,
   onPlayPauseChange: noop,
+  onAutoPlayPauseChange: noop,
   onFrameRateChange: noop,
   onClose: noop,
 };
@@ -92,6 +109,7 @@ CinePlayer.propTypes = {
   /** 'true' if playing, 'false' if paused */
   isPlaying: PropTypes.bool.isRequired,
   onPlayPauseChange: PropTypes.func,
+  onAutoPlayPauseChange: PropTypes.func,
   onFrameRateChange: PropTypes.func,
   onClose: PropTypes.func,
 };

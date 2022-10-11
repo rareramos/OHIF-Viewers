@@ -68,6 +68,8 @@ import editPatient from './../../assets/icons/edit-patient.svg';
 import oldTrash from './../../assets/icons/old-trash.svg';
 import oldPlay from './../../assets/icons/old-play.svg';
 import oldStop from './../../assets/icons/old-stop.svg';
+import oldAPlay from './../../assets/icons/aplay-play.svg';
+import oldAStop from './../../assets/icons/aplay-stop.svg';
 
 const ICONS = {
   'arrow-down': arrowDown,
@@ -137,6 +139,8 @@ const ICONS = {
   'old-trash': oldTrash,
   'old-play': oldPlay,
   'old-stop': oldStop,
+  'aplay-play': oldAPlay,
+  'aplay-stop': oldAStop,
 };
 
 /**
