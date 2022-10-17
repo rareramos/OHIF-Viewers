@@ -4,6 +4,7 @@ import { ViewportGrid, ViewportPane, useViewportGrid } from '@ohif/ui';
 import EmptyViewport from './EmptyViewport';
 import classNames from 'classnames';
 import CornerstoneCacheService from '../../../../extensions/cornerstone/src/services/ViewportService/CornerstoneCacheService';
+import _ from 'lodash';
 
 function ViewerViewportGrid(props) {
   const { servicesManager, viewportComponents, dataSource } = props;
@@ -17,7 +18,8 @@ function ViewerViewportGrid(props) {
     MeasurementService,
     HangingProtocolService,
     CineService,
-
+    CornerstoneViewportService,
+    ViewportGridService
   } = servicesManager.services;
 
   /**
@@ -122,8 +124,75 @@ function ViewerViewportGrid(props) {
         }
       }
     );
+    //
+    const goNextPage = () => {
+      const displaySets = _.orderBy(DisplaySetService.getActiveDisplaySets(), [imageSet => Number(imageSet.SeriesNumber)], ['asc']);
+      const totalViews = CornerstoneViewportService.viewportsInfo.size;
+      const viewportSpecificData = ViewportGridService.getState().viewports;
+      //
+      if(displaySets.length < totalViews) return;
+      //
+      const dirtyViewportPanes = [];
+      let maxKey = 0;
+      for (let j = 0; j < viewportSpecificData.length; j++) {
+        if(viewportSpecificData[j].displaySetInstanceUIDs) {
+          const _displaySetInstanceUID = viewportSpecificData[j].displaySetInstanceUIDs[0];
+          for (let i = 0; i < displaySets.length; i++) {
+            if (displaySets[i].displaySetInstanceUID === _displaySetInstanceUID) {
+              maxKey = Math.max(i, maxKey);
+            }
+          }
+        }
+      }
+      if(maxKey === (displaySets.length-1)) return; //then max pic already
+      //
+      const newViewportSpecificData = [];
+      for (let i = (maxKey+1);i<displaySets.length;i++) {
+        newViewportSpecificData.push(displaySets[i]);
+      }
+      let numnew = 0;
+      for (let i = 0; i < viewportSpecificData.length; i++) {
+        if(viewportSpecificData[i].displaySetInstanceUIDs) {
+          const viewportPane = newViewportSpecificData[numnew];
+          const isNonEmptyViewport =
+            viewportPane &&
+            viewportPane.StudyInstanceUID &&
+            viewportPane.displaySetInstanceUID;
+
+          if (isNonEmptyViewport) {
+            dirtyViewportPanes.push({
+              viewportIndex: i,
+              StudyInstanceUID: viewportPane.StudyInstanceUID,
+              displaySetInstanceUID: viewportPane.displaySetInstanceUID,
+            });
+          }
+          numnew++;
+        }
+      }
+      dirtyViewportPanes.forEach((vp, i) => {
+        if (vp && vp.StudyInstanceUID) {
+          viewportGridService.setDisplaySetsForViewport({
+            viewportIndex: vp.viewportIndex,
+            displaySetInstanceUIDs: [vp.displaySetInstanceUID],
+          });
+        }
+      });
+      //
+      if(dirtyViewportPanes.length < totalViews) {
+        const _numRows = 1;
+        const _numColumns = dirtyViewportPanes.length;
+        viewportGridService.setLayout({
+          numRows: _numRows,
+          numCols: _numColumns,
+          layoutType: 'grid',
+          layoutOptions: [],
+        });
+      }
+    }
+    window.addEventListener('updateNextPageImages', goNextPage);
     return () => {
       unsubscribe();
+      window.removeEventListener('updateNextPageImages', goNextPage);
     };
   }, []);
 

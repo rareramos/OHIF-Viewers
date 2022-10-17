@@ -432,6 +432,11 @@ const commandsModule = ({ servicesManager }) => {
   };
 
   const definitions = {
+    nextPageViewport: {
+      commandFn: actions.nextPageViewport,
+      storeContexts: ['viewports'],
+      options: {},
+    },
     setWindowLevel: {
       commandFn: actions.setWindowLevel,
       storeContexts: [],

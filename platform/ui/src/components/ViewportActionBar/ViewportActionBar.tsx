@@ -343,7 +343,7 @@ ViewportActionBar.propTypes = {
     seriesDescription: PropTypes.string.isRequired,
     modality: PropTypes.string.isRequired,
     patientInformation: PropTypes.shape({
-      patientName: PropTypes.string.isRequired,
+      patientName: PropTypes.string,
       patientSex: PropTypes.string.isRequired,
       patientAge: PropTypes.string.isRequired,
       MRN: PropTypes.string.isRequired,
