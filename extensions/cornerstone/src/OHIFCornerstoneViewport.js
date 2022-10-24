@@ -207,9 +207,8 @@ class OHIFCornerstoneViewport extends Component {
       currentImageIdIndex,
       // If this comes from the instance, would be a better default
       // `FrameTime` in the instance
-      // frameRate = 0,
+      frameRate = 0,
     } = this.state.viewportData.stack;
-
     // TODO: Does it make more sense to use Context?
     if (this.props.children && this.props.children.length) {
       childrenWithProps = this.props.children.map((child, index) => {
@@ -268,7 +267,7 @@ class OHIFCornerstoneViewport extends Component {
           stackPrefetch={this.props.stackPrefetch}
           isStackPrefetchEnabled={this.props.isStackPrefetchEnabled}
           // ~~ Connected (From REDUX)
-          // frameRate={frameRate}
+          frameRate={frameRate}
           // isPlaying={false}
           // onElementEnabled={() => {}}
           // setViewportActive{() => {}}
